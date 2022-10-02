@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="./jquery-3.6.1.js"></script>
+    <script src="./template-web.js"></script>
+</head>
+<style>
+
+</style>
+
+<body>
+    <div id="name">
+    </div>
+</body>
+<script type="text/html" id="js_temc">
+    <h1>名字:{{uname}}</h1>
+    <h1>年龄:{{age}}</h1>
+    {{@ text}}
+    <ul>
+        {{each hobby}}
+        <li> 索引号是{{$index}},值是{{$value}}</li>
+        {{/each}}
+    </ul>
+</script>
+<script>
+    var dat1 = [dataa = {
+        uname: '123',
+        age: '567',
+        text: "<h1>drf</h1>",
+        hobby: ['吃饭', '睡觉', '玩游戏']
+
+    }, datab = {
+        uname: '23',
+        age: '67',
+        text: "<h1>666</h1>",
+        hobby: ['吃饭', '睡觉', '玩游戏']
+
+    }]
+    var temp = []
+
+    $.each(dat1, function(i, item) {
+        temp[i] = template('js_temc', dat1[i]);
+    });
+    $('#name').html(temp.join(''));
+    console.log(temp);
+</script>
+
+</html>

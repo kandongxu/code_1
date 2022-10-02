@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="./bootstrap.css" />
+    <script src="./jquery-3.6.1.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <style>
+
+    </style>
+</head>
+
+<body>
+    <form action="跳转的页面" target="_blank" method="get" enctype="application/x-www-form-urlencoded">
+        <!-- target="_self"在当前页面打开 _blank在新页面打开 methed='get'提交少量数据 post大量数据隐蔽 enctype上面的默认="multipart/form-data"提交文件用-->
+        <input type="text" name="uname">输入框<br>
+        <input type="password" name="password">密码框<br>
+        <button type="submit">提交按钮</button> <br>
+        <input type="submit" value="提交按钮"><br>
+        <input type="checkbox" name="check">复选<br>
+        <input type="radio">单选<br>
+        <input type="button" value="按钮无功能"><br>
+        <input type="image" src="../../eLuvLetter-master/img/play.png">图片做按钮<br>
+        <input type="hidden">隐藏域<br>
+        <input type="file" id="file1">
+        <input type="button" value="上传文件" id="file_btn"><br>
+        <!-- 进度条 -->
+        <div class="progress" style="margin-top:20px ;margin-left:20px;width: 300px;">
+            <div class="progress-bar " style="width: 0%;">
+                0
+            </div>
+        </div>
+        <img id="img" src="" alt="">
+
+    </form>
+</body>
+<script>
+    // $.get(url, data, callback);
+    // $.post(url, data, callback);
+    // $.ajax({
+    //     type: "",
+    //     url: "",
+    //     data: {},
+    //     success: function(res) {}
+    // });
+
+    //原生写法
+    // function xhr_get(url,data,callback) {
+    //     var xhr = new XMLHttpRequest();
+    // xhr.open('get', url?data);
+    //     xhr.send
+    //     xhr.onreadystatechange = function() {
+    //         if (xhr.readyState === 4 && xhr.status === 200) {
+    //             console.log(xhr.responseText);
+    //         }
+    //     }
+    // }
+    //url地址后加？请求参数 url？id=1&name=kan //无空格
+
+    // function xhr_post(url,data,callback) {
+    //     var xhr = new XMLHttpRequest();
+    //     xhr.open('post', url);
+    // xhr.setRequestHearder('Content-type','application/x-form-urlencoded');
+    //     xhr.send(data);
+    //     xhr.onreadystatechange = function() {
+    //         if (xhr.readyState === 4 && xhr.status === 200) {
+    // var result = JSON.parse(xhr.responseText)
+    // console.log(result);
+    //         }
+    //     }
+    // }
+
+    //url转码
+    // var url = encodeURI('中文');
+    // console.log(url);
+
+    // console.log(decodeURI(url));
+
+    // 对象转变
+    // var resolveData = function(data) {
+    //     var arr = [];
+    //     for (let k in data) {
+    //         var str = k + '=' + data[k];
+    //         arr.push(str);
+    //     }
+    //     return arr.join('&');
+    // }
+    // var json1 = {
+    //     name: "book",
+    //     size: "big"
+    // };
+
+    // console.log(resolveData(json1));
+
+    // var form = document.querySelector('form');
+    // form.addEventListener('submit', function(e) {
+    //     e.preventDefault()
+    //         //创建formdata获取表单数据
+    //     var fd = new FormData(form);
+    //     var xhr = new XMLHttpRequest();
+    //     xhr.open('post', 'url地址');
+    //     xhr.send(fd);
+
+    //     xhr.onreadystatechange = function() {
+    //         if (xhr.readyState === 4 && xhr.status === 200) {
+    //             console.log(JSON.parse(xhr.responseText));
+    //         }
+
+    //     }
+    // });
+
+    //上传文件
+    //验证file是否有文件
+
+
+    var file_btn = document.querySelector('#file_btn');
+    file_btn.addEventListener('click', function() {
+        var files = document.querySelector('#file1').files;
+        if (files.length <= 0) {
+            return alert('请上传文件')
+        }
+        //文件导入formdata
+        var uploadFile = new FormData();
+
+
+
+
+        uploadFile.append('aveant', files[0]);
+        //上传
+        console.log(uploadFile);
+        var xhr = new XMLHttpRequest();
+        //监听文件上传进度
+        xhr.upload.onprogress = function(e) {
+            if (e.lengthComputable) {
+                var percentage = Math.ceil((e.loaded / e.total) * 100);
+                console.log(percentage);
+                //进度条
+                // var progress = document.querySelector('.progress-bar');
+                // progress.style.width = percentage + '%';
+                // progress.innerHTML = percentage + '%';
+                $('.progress-bar').attr("style", "width:" + percentage + '%').html(percentage + '%');
+                xhr.upload.onload = function() {
+                    $('.progress-bar').removeClass().addClass('progress-bar progress-bar-success')
+                }
+            }
+        }
+        xhr.open('post', 'http://liulongbin.top:3006/api/upload/avatar');
+        // xhr.setRequestHearder('Content-type', 'application/x-form-urlencoded');
+        xhr.send(uploadFile);
+
+
+
+        //判断是否成功
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                var data = JSON.parse(xhr.responseText);
+
+                if (data.status === 200) {
+                    console.log(data);
+                    //上传成功
+                    document.querySelector('#img').src = 'http://liulongbin.top:3006' + data.url
+                } else {
+                    console.log(data.status);
+                }
+            }
+
+        }
+    })
+</script>
+
+</html>
